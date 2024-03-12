@@ -246,6 +246,7 @@ def pregunta_13():
     Name: _c5b, dtype: int64
     """
 
+
     #df13_0 = tbl0.copy()
     #df13_2 = tbl2.copy()
     #df13 = pd.merge(
