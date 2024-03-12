@@ -6,8 +6,8 @@ Este archivo contiene las preguntas que se van a realizar en el laboratorio.
 
 Utilice los archivos `tbl0.tsv`, `tbl1.tsv` y `tbl2.tsv`, para resolver las preguntas.
 
-
 """
+
 import pandas as pd
 
 tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
@@ -23,6 +23,7 @@ def pregunta_01():
     40
 
     """
+
     return len(tbl0.index)
 
 
@@ -53,6 +54,7 @@ def pregunta_03():
     """
     return tbl0["_c1"].value_counts().sort_index()
 
+
 def pregunta_04():
     """
     Calcule el promedio de _c2 por cada letra de la _c1 del archivo `tbl0.tsv`.
@@ -64,11 +66,9 @@ def pregunta_04():
     D    3.833333
     E    4.785714
     Name: _c2, dtype: float64
-    
     """
-    
-
-    return tbl0[["_c1","_c2"]].groupby("_c1").mean()
+    df4 = tbl0[["_c1", "_c2"]].groupby("_c1").agg({"_c2": "mean"})
+    return df4["_c2"]
 
 
 def pregunta_05():
@@ -85,8 +85,8 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return tbl0[["_c1","_c2"]].groupby("_c1").max()
-
+    df5 = tbl0[["_c1", "_c2"]].groupby("_c1").max()
+    return df5["_c2"]
 
 
 def pregunta_06():
@@ -98,11 +98,9 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    df1=tbl1["_c4"].copy()
-    values=[letra.upper() for letra in df1.values]
-    return list(sorted(set(values)))
-
-#print(pregunta_06())
+    df6 = tbl1["_c4"].copy()
+    valores = [letra.upper() for letra in df6.values]
+    return sorted(list(set(valores)))
 
 
 def pregunta_07():
@@ -118,9 +116,9 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return tbl0[["_c1","_c2"]].groupby("_c1").sum()
+    df7 = tbl0[["_c1", "_c2"]].groupby("_c1").sum()
+    return df7["_c2"]
 
-#print(pregunta_07())
 
 def pregunta_08():
     """
@@ -137,10 +135,9 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    df8=tbl0.copy()
-    df8["suma"]=df8["_c0"]+df8["_c2"]
+    df8 = tbl0.copy()
+    df8["suma"] = df8["_c0"] + df8["_c2"]
     return df8
-#print(pregunta_08())
 
 
 def pregunta_09():
@@ -158,8 +155,8 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    df9=tbl0.copy()
-    df9["year"]=[date[0:3] for date in df9["year"]]
+    df9 = tbl0.copy()
+    df9["year"] = [date[0:4] for date in df9["_c3"]]
     return df9
 
 
@@ -177,12 +174,13 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    df10=tbl0.copy()
-    df10=tbl0[["_c1","_c2"]]
-    return df10.groupby("_c1",as_index=False).agg(
-        [lambda x: ":" .join(map(str,sorted((x))))])
 
-#print(pregunta_10())
+    df10 = tbl0.copy()
+    df10 = tbl0[["_c1", "_c2"]]
+    return df10.groupby("_c1", as_index=True).agg(
+        {"_c2": lambda x: ":".join(map(str, sorted(x)))}
+    )
+
 
 def pregunta_11():
     """
@@ -199,13 +197,12 @@ def pregunta_11():
     37   37  a,c,e,f
     38   38      d,e
     39   39    a,d,f
-    
     """
-    df10=tbl1.copy()
-    df10=tbl1[["_c0","_c4"]]
-    return df10.groupby("_c0",as_index=False).agg(
-        [lambda x: "," .join(map(str,sorted((x))))])
-#print(pregunta_11())
+    df11 = tbl1.copy()
+    df11 = tbl1[["_c0", "_c4"]]
+    return df11.groupby("_c0", as_index=False).agg(
+        {"_c4": lambda x: ",".join(map(str, sorted((x))))}
+    )
 
 
 def pregunta_12():
@@ -223,18 +220,15 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    df12=tbl2.copy()
-    df12=tbl2[["_c0","_c5a","_c5b"]]
-
-    #df12=df12['_c5'] = [df12["_c5a"].str.cat(df12['_c5b'], sep=':')]
-    # return df12.groupby("_c0",as_index=False).agg(
-    #     [lambda x: "," .join(map(str,sorted((x))))])
-    df12["_c5"] = df12["_c5a"] +":"+ df12["_c5b"].astype(str) 
+    df12 = tbl2.copy()
+    df12 = tbl2[["_c0", "_c5a", "_c5b"]]
+    df12["_c5"] = df12["_c5a"] + ":" + df12["_c5b"].astype(str)
     df12.pop("_c5a")
     df12.pop("_c5b")
-    return df12.groupby("_c0",as_index=False).agg(
-        [lambda x: "," .join(map(str,sorted((x))))])
-#print(pregunta_12())
+
+    return df12.groupby("_c0", as_index=False).agg(
+        {"_c5": lambda x: ",".join(map(str, sorted((x))))}
+    )
 
 
 def pregunta_13():
@@ -251,18 +245,13 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    df0=tbl0.copy()
-    df2=tbl2.copy()
-    df0["_c5"] = df0["_c1"] +":"+ df0["_c0"].astype(str) 
-    # df2["clave"]=tbl0["_c1"]
-    # for letter in tbl0["_c1"]:
-    #     print(letter.index)
-    # df0["new_column"] = df2.apply(lambda x : x["_c0"] + '-' + x["_c5b"], axis = 1)
-    df0["new_column"] = df2["_c0"] +":"+ df2["_c5b"].astype(str) 
-    print(df0)
 
-
-##
-#print(pregunta_13())
-
-
+    #df13_0 = tbl0.copy()
+    #df13_2 = tbl2.copy()
+    #df13 = pd.merge(
+    #    df13_0,
+    #    df13_2,
+    #    on="_c0",
+    #)
+    #df13 = df13.groupby("_c1")["_c5b"].sum()  # .agg({"_c5b": "sum"})
+    return tbl0.merge(tbl2, on='_c0').groupby('_c1')['_c5b'].sum()
